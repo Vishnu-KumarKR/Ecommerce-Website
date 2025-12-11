@@ -13,7 +13,18 @@ export default function Signup() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  const inputStyle = { width: '100%', padding: '11px 12px', borderRadius: 8, border: '1px solid #e5e7eb', fontSize: 15, lineHeight: '20px' };
+  // Consistent modern styling matching Login.jsx
+  const modernInputStyle = {
+    width: '100%',
+    padding: '12px 16px',
+    borderRadius: '8px',
+    border: '1px solid #e5e7eb',
+    background: '#f9fafb',
+    fontSize: '15px',
+    color: '#111827',
+    outline: 'none',
+    boxSizing: 'border-box'
+  };
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -46,28 +57,144 @@ export default function Signup() {
       setLoading(false);
     }
   }
+
   return (
-    <div style={{ maxWidth: 400, margin: '60px auto', background: '#fff', padding: 32, borderRadius: 14, boxShadow: '0 4px 18px rgba(0,0,0,0.07)' }}>
-      <img src="/assets/mylogo.png" alt="MiniAmazon" style={{ height: 70, width: 'auto', display: 'block', margin: '0 auto 24px auto' }} />
-      <h2 style={{ marginBottom: 18, color: '#1a1a1a', fontWeight: 700, textAlign: 'center' }}>Sign Up</h2>
-      <form onSubmit={onSubmit} style={{ display: 'grid', gap: 15 }}>
-        <input value={name} onChange={e => setName(e.target.value)} placeholder="Your name" type="text" style={inputStyle}/>
-        <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Email address" type="email" style={inputStyle}/>
-        <div style={{ position: 'relative' }}>
-          <input value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" type={showPassword ? 'text' : 'password'} style={inputStyle} />
-          <button type="button" tabIndex={-1} aria-label="Show password" onClick={() => setShowPassword(v => !v)} style={{ position: 'absolute', top: '50%', right: 14, transform: 'translateY(-50%)', background: 'none', border: 0, cursor: 'pointer', color: '#888', fontSize: 22, padding:0, lineHeight:1 }}>{showPassword ? '🙈' : '👁️'}</button>
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: '#f3f4f6',
+      padding: '20px'
+    }}>
+      <div style={{
+        width: '100%',
+        maxWidth: '420px',
+        background: '#ffffff',
+        borderRadius: '16px',
+        boxShadow: '0 10px 25px rgba(0,0,0,0.05)',
+        padding: '40px',
+        boxSizing: 'border-box'
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
+          <img src="/assets/mylogo.png" alt="MiniAmazon" style={{ height: '60px', width: 'auto' }} />
         </div>
-        <div style={{ position: 'relative' }}>
-          <input value={confirm} onChange={e => setConfirm(e.target.value)} placeholder="Confirm password" type={showConfirm ? 'text' : 'password'} style={inputStyle} />
-          <button type="button" tabIndex={-1} aria-label="Show confirm password" onClick={() => setShowConfirm(v => !v)} style={{ position: 'absolute', top: '50%', right: 14, transform: 'translateY(-50%)', background: 'none', border: 0, cursor: 'pointer', color: '#888', fontSize: 22, padding:0, lineHeight:1 }} >{showConfirm ? '🙈' : '👁️'}</button>
+
+        <h2 style={{
+          textAlign: 'center',
+          fontSize: '24px',
+          fontWeight: '700',
+          color: '#1f2937',
+          marginBottom: '32px'
+        }}>
+          Sign Up
+        </h2>
+
+        <form onSubmit={onSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <div>
+            <input
+              value={name}
+              onChange={e => setName(e.target.value)}
+              placeholder="Your name"
+              type="text"
+              style={modernInputStyle}
+              onFocus={(e) => e.target.style.borderColor = '#2563eb'}
+              onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+            />
+          </div>
+          <div>
+            <input
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              placeholder="Email address"
+              type="email"
+              style={modernInputStyle}
+              onFocus={(e) => e.target.style.borderColor = '#2563eb'}
+              onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+            />
+          </div>
+
+          <div style={{ position: 'relative' }}>
+            <input
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              placeholder="Password"
+              type={showPassword ? 'text' : 'password'}
+              style={modernInputStyle}
+              onFocus={(e) => e.target.style.borderColor = '#2563eb'}
+              onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+            />
+            <button
+              type="button"
+              tabIndex={-1}
+              aria-label="Show password"
+              onClick={() => setShowPassword(v => !v)}
+              style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 0, cursor: 'pointer', color: '#6b7280', fontSize: '18px', padding: 0, lineHeight: 1 }}
+            >
+              {showPassword ? '🙈' : '👁️'}
+            </button>
+          </div>
+
+          <div style={{ position: 'relative' }}>
+            <input
+              value={confirm}
+              onChange={e => setConfirm(e.target.value)}
+              placeholder="Confirm password"
+              type={showConfirm ? 'text' : 'password'}
+              style={modernInputStyle}
+              onFocus={(e) => e.target.style.borderColor = '#2563eb'}
+              onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+            />
+            <button
+              type="button"
+              tabIndex={-1}
+              aria-label="Show confirm password"
+              onClick={() => setShowConfirm(v => !v)}
+              style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 0, cursor: 'pointer', color: '#6b7280', fontSize: '18px', padding: 0, lineHeight: 1 }}
+            >
+              {showConfirm ? '🙈' : '👁️'}
+            </button>
+          </div>
+
+          {error && (
+            <div style={{ color: '#ef4444', fontSize: '14px', textAlign: 'center', background: '#fee2e2', padding: '10px', borderRadius: '8px' }}>
+              {error}
+            </div>
+          )}
+          {success && (
+            <div style={{ color: '#10b981', fontSize: '14px', textAlign: 'center', background: '#d1fae5', padding: '10px', borderRadius: '8px' }}>
+              Account created! Redirecting…
+            </div>
+          )}
+
+          <button
+            type="submit"
+            style={{
+              width: '100%',
+              padding: '14px',
+              background: '#ff9100',
+              color: '#fff',
+              border: 0,
+              borderRadius: '8px',
+              fontWeight: '600',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              opacity: loading ? 0.7 : 1,
+              fontSize: '16px',
+              boxShadow: '0 4px 6px rgba(255, 145, 0, 0.2)',
+              transition: 'transform 0.1s'
+            }}
+            disabled={loading}
+          >
+            {loading ? 'Signing up…' : 'Sign Up'}
+          </button>
+        </form>
+
+        <div style={{ textAlign: 'center', marginTop: '24px', fontSize: '14px', color: '#6b7280' }}>
+          Already have an account?{' '}
+          <Link to="/login" style={{ color: '#ff9100', fontWeight: '600', textDecoration: 'none' }}>
+            Log In
+          </Link>
         </div>
-        {error && <div style={{ color: '#e11d48', fontSize: 14, textAlign: 'center' }}>{error}</div>}
-        {success && <div style={{ color: '#10b981', fontSize: 14, textAlign: 'center' }}>Account created! Redirecting…</div>}
-        <button type="submit" style={{ padding: '8px 20px', background: '#ff7a18', color: '#fff', border: 0, borderRadius: 8, fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1, fontSize: 14, margin: '0 auto', display: 'block', width: 'fit-content' }} disabled={loading}>{loading ? 'Signing up…' : 'Sign In'}</button>
-      </form>
-      <div style={{marginTop:16, textAlign: 'center'}}>
-        <span style={{fontSize:15, color:'#444', marginRight: 8}}>Already have an account?</span>
-        <Link to="/login" style={{color:'#ff7a18', fontWeight: 600, textDecoration: 'none'}}>Log In</Link>
       </div>
     </div>
   );

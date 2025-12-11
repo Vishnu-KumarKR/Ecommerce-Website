@@ -11,6 +11,26 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* Theme variables (classic default) */
+  --color-primary: #153266;
+  --color-sidebar-bg: #0f1c3d;
+  --color-text-light: #eaf6fa;
+  --color-accent: #ff9100;
+  --color-surface: #ffffff;
+  --color-page-bg: #ffffff;
+  --color-link: #153266;
+}
+
+/* Emerald theme */
+[data-theme="emerald"] {
+  --color-primary: #0f766e;
+  --color-sidebar-bg: #064e3b;
+  --color-text-light: #ecfdf5;
+  --color-accent: #10b981;
+  --color-surface: #ffffff;
+  --color-page-bg: #f0fdf4;
+  --color-link: #065f46;
 }
 
 a {
@@ -18,6 +38,7 @@ a {
   color: #646cff;
   text-decoration: inherit;
 }
+
 a:hover {
   color: #535bf2;
 }
@@ -25,21 +46,23 @@ a:hover {
 body {
   margin: 0;
   display: flex;
-  place-items: center;
+  place-items: flex-start;
+  /* Changed from center */
   min-width: 320px;
   min-height: 100vh;
+  width: 100%;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+#root {
+  width: 100%;
 }
 
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  /* Changed from center */
 }
 
 .logo {
@@ -48,9 +71,11 @@ h1 {
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
+
 .logo.vanilla:hover {
   filter: drop-shadow(0 0 2em #3178c6aa);
 }
@@ -74,12 +99,24 @@ button {
   cursor: pointer;
   transition: border-color 0.25s;
 }
+
 button:hover {
   border-color: #646cff;
 }
+
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+.light-input {
+  background: var(--color-surface);
+  color: #0f172a;
+}
+
+.light-input::placeholder {
+  color: #6b7280;
+  opacity: 1;
 }
 
 @media (prefers-color-scheme: light) {
@@ -87,10 +124,30 @@ button:focus-visible {
     color: #213547;
     background-color: #ffffff;
   }
+
   a:hover {
     color: #747bff;
   }
+
   button {
     background-color: #f9f9f9;
+  }
+}
+
+@media (max-width: 640px) {
+  .hide-mobile {
+    display: none !important;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

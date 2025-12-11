@@ -12,30 +12,47 @@ export const useCart = () => {
 
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
+  const user = JSON.parse(localStorage.getItem('mini_amazon_user') || 'null');
+  const getCartKey = (u) => u ? `mini_amazon_cart_${u.email}` : 'mini_amazon_cart_guest';
 
-  // Load cart from localStorage on mount
+  // Load cart on mount and when auth changes
   useEffect(() => {
-    const savedCart = localStorage.getItem('mini_amazon_cart');
-    if (savedCart) {
-      try {
-        setCart(JSON.parse(savedCart));
-      } catch (e) {
-        console.error('Failed to load cart from localStorage:', e);
+    const loadCart = () => {
+      const currentUser = JSON.parse(localStorage.getItem('mini_amazon_user') || 'null');
+      const key = getCartKey(currentUser);
+      const savedCart = localStorage.getItem(key);
+      if (savedCart) {
+        try {
+          setCart(JSON.parse(savedCart));
+        } catch (e) {
+          console.error('Failed to load cart', e);
+          setCart([]);
+        }
+      } else {
+        setCart([]);
       }
-    }
+    };
+
+    loadCart();
+
+    const handleAuthChange = () => loadCart();
+    window.addEventListener('auth-change', handleAuthChange);
+    return () => window.removeEventListener('auth-change', handleAuthChange);
   }, []);
 
-  // Save cart to localStorage whenever it changes
+  // Save cart whenever it changes
   useEffect(() => {
-    localStorage.setItem('mini_amazon_cart', JSON.stringify(cart));
+    const currentUser = JSON.parse(localStorage.getItem('mini_amazon_user') || 'null');
+    const key = getCartKey(currentUser);
+    localStorage.setItem(key, JSON.stringify(cart));
   }, [cart]);
 
   const addToCart = (product) => {
     setCart((prevCart) => {
-      const existingItem = prevCart.find((item) => item.id === product.id);
+      const existingItem = prevCart.find((item) => String(item.id) === String(product.id));
       if (existingItem) {
         return prevCart.map((item) =>
-          item.id === product.id
+          String(item.id) === String(product.id)
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
@@ -45,7 +62,8 @@ export const CartProvider = ({ children }) => {
   };
 
   const removeFromCart = (productId) => {
-    setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
+    const normalizedId = String(productId);
+    setCart((prevCart) => prevCart.filter((item) => String(item.id) !== normalizedId));
   };
 
   const updateQuantity = (productId, quantity) => {
@@ -53,9 +71,10 @@ export const CartProvider = ({ children }) => {
       removeFromCart(productId);
       return;
     }
+    const normalizedId = String(productId);
     setCart((prevCart) =>
       prevCart.map((item) =>
-        item.id === productId ? { ...item, quantity } : item
+        String(item.id) === normalizedId ? { ...item, quantity } : item
       )
     );
   };

@@ -7,7 +7,7 @@ const formatDisplayINR = (price) => formatINR(price);
 
 export default function Cart() {
   const navigate = useNavigate();
-  const { cart, removeFromCart, updateQuantity, clearCart, getCartTotal } = useCart();
+  const { cart, removeFromCart, updateQuantity, addToCart, getCartTotal, getCartCount } = useCart();
 
   if (cart.length === 0) {
     return (
@@ -37,6 +37,8 @@ export default function Cart() {
   }
 
   const total = getCartTotal();
+  const itemCount = getCartCount();
+
 
   return (
     <div style={{ minHeight: '100vh', background: '#f7fafd', padding: '40px 20px' }}>
@@ -48,18 +50,18 @@ export default function Cart() {
           <div style={{ background: '#fff', borderRadius: 16, padding: 30, boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
             {cart.map((item) => {
               const originalName = item.name || '';
-              const slug = originalName.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+              const slug = originalName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
               const baseNames = [slug];
               const lowerSpaces = originalName.toLowerCase();
-              baseNames.push(lowerSpaces.replace(/\s+/g,'-'));
-              baseNames.push(lowerSpaces.replace(/\s+/g,'_'));
+              baseNames.push(lowerSpaces.replace(/\s+/g, '-'));
+              baseNames.push(lowerSpaces.replace(/\s+/g, '_'));
               baseNames.push(lowerSpaces);
               baseNames.push(originalName);
               const encodedOriginal = encodeURIComponent(originalName);
-              const exts = ['webp','jpg','jpeg','png'];
+              const exts = ['webp', 'jpg', 'jpeg', 'png'];
               const candidates = [];
-              baseNames.forEach(b=> exts.forEach(ext=> candidates.push(`/products/${b}.${ext}`)));
-              exts.forEach(ext=> candidates.push(`/products/${encodedOriginal}.${ext}`));
+              baseNames.forEach(b => exts.forEach(ext => candidates.push(`/products/${b}.${ext}`)));
+              exts.forEach(ext => candidates.push(`/products/${encodedOriginal}.${ext}`));
               if (item.imageUrl) candidates.unshift(item.imageUrl);
 
               return (
@@ -129,7 +131,7 @@ export default function Cart() {
                           {item.quantity}
                         </span>
                         <button
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          onClick={() => addToCart(item)}
                           style={{
                             width: 36,
                             height: 36,
@@ -178,7 +180,7 @@ export default function Cart() {
             <h2 style={{ fontSize: 24, fontWeight: 700, color: '#01336b', marginBottom: 20 }}>Order Summary</h2>
             <div style={{ marginBottom: 20 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
-                <span style={{ color: '#01336b', fontWeight: 600 }}>Subtotal ({cart.length} items)</span>
+                <span style={{ color: '#01336b', fontWeight: 600 }}>Subtotal ({itemCount} items)</span>
                 <span style={{ fontWeight: 700, color: '#01336b' }}>{formatINR(total)}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
@@ -194,9 +196,8 @@ export default function Cart() {
             </div>
             <button
               onClick={() => {
-                alert('Order placed successfully! (This is a demo)');
-                clearCart();
-                navigate('/');
+                navigate('/buy-now');
+                window.scrollTo(0, 0);
               }}
               style={{
                 width: '100%',
@@ -214,7 +215,10 @@ export default function Cart() {
               Proceed to Checkout
             </button>
             <button
-              onClick={() => navigate('/')}
+              onClick={() => {
+                navigate('/');
+                window.scrollTo(0, 0);
+              }}
               style={{
                 width: '100%',
                 padding: '12px',
@@ -230,6 +234,7 @@ export default function Cart() {
               Continue Shopping
             </button>
           </div>
+
         </div>
       </div>
     </div>

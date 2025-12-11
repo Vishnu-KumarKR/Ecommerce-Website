@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { getToken } from '../auth'
 
 // Use relative path to leverage Vite's proxy (defined in vite.config.js)
 // This avoids CORS issues and routes requests through the dev server
@@ -12,7 +13,12 @@ export const apiClient = axios.create({
 // Add request interceptor to log requests
 apiClient.interceptors.request.use(
 	config => {
-		console.log('🌐 API Request:', config.method?.toUpperCase(), config.baseURL + config.url)
+		const token = getToken()
+		if (token) {
+			config.headers = config.headers || {}
+			config.headers.Authorization = `Bearer ${token}`
+		}
+		console.log('🌐 API Request:', config.method?.toUpperCase(), (config.baseURL || '') + config.url)
 		return config
 	},
 	error => {

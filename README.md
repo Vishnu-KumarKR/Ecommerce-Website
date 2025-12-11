@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-# vite-react-miniamazon-store
-Modern full-stack storefront built with Vite + React on the frontend and Node + Express on the backend. The app delivers a MiniAmazon shopping experience with category and brand filtering, rich product cards, cart management, and protected auth flows.
-=======
 ## ECommerce (Mini Amazon)
 
 Modern full-stack storefront built with Vite + React on the frontend and Node + Express on the backend. The app delivers a MiniAmazon shopping experience with category and brand filtering, rich product cards, cart management, and protected auth flows.
@@ -34,6 +30,12 @@ Backend: http://localhost:5000 (health: /health, products: /api/products)
 
 ### Environment
 Frontend can read `VITE_API_URL` (defaults to http://localhost:5000).
+### Admin Panel
+- Login with `admin@site.com` / `demo123`
+- Manage catalog via `/admin`
+- Product CRUD persists to the embedded SQLite database (`backend/data/store.db`)
 
->>>>>>> 2d81a51 (Initial commit)
-
+### Checkout Flow
+- Cart additions are also captured inside a LIFO stack for quick undo actions
+- Checkout moves shoppers from `Cart → Buy Now → Checkout`
+- Buy Now summarizes the stack before redirecting to address & payment capture

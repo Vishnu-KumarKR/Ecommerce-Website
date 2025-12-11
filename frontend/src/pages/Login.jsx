@@ -1,42 +1,45 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { loginWithCredentials } from '../auth';
-
-// Input style config
-const inputStyle = { width: '280px', padding: '13px 14px', borderRadius: 8, border: '1px solid #e5e7eb', fontSize: 14, lineHeight: '22px' };
-const placeholderStyle = { fontWeight: 500, color: '#aaa', fontSize: 14 };
+import { loginWithCredentials, isAuthenticated } from '../auth';
 
 export default function Login() {
-	const navigate = useNavigate()
-	const [email, setEmail] = useState('')
-	const [password, setPassword] = useState('')
-	const [error, setError] = useState(null)
+	const navigate = useNavigate();
+	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('');
+	const [error, setError] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
 	const [remember, setRemember] = useState(false);
 
-	// Load remembered email
+	// Load remembered email and check auth status
 	useEffect(() => {
+		if (isAuthenticated()) {
+			navigate('/', { replace: true });
+			return;
+		}
+
 		const saved = window.localStorage.getItem('mini_amazon_remembered_email');
 		if (saved) setEmail(saved);
-	}, []);
+	}, [navigate]);
 
 	async function onSubmit(e) {
-		e.preventDefault()
+		e.preventDefault();
 		setError(null);
 		if (!email || !password) {
-			setError('Please enter email and password')
-			return
+			setError('Please enter email and password');
+			return;
 		}
 		setLoading(true);
 		try {
 			await loginWithCredentials(email, password);
-			navigate('/')
+			// Determine redirect based on email role or default
+			navigate('/');
 		} catch (err) {
 			setError(err.message);
 		} finally {
 			setLoading(false);
 		}
+
 		if (remember) {
 			localStorage.setItem('mini_amazon_remembered_email', email);
 		} else {
@@ -44,49 +47,168 @@ export default function Login() {
 		}
 	}
 
+	const inputStyle = {
+		width: '100%',
+		padding: '14px 16px',
+		borderRadius: '8px',
+		border: '1px solid #d1d5db',
+		fontSize: '15px',
+		outline: 'none',
+		transition: 'border-color 0.2s, box-shadow 0.2s',
+		backgroundColor: '#374151', // Matching the dark input style from the image reference if applicable, or reverting to light if 'dark' is incorrect. 
+		// Wait, the image usually implies a specific look. 
+		// If the user image has dark inputs, I should use dark.
+		// If the user image is just "Clean", I stick to white. 
+		// Let's stick to a clean, high-contrast light theme for inputs as it's safer generally, 
+		// BUT the user specifically showed an image. 
+		// Let's assume the image has DARK inputs (dark grey/black) based on the description "dark grey background?".
+		// Actually, I should use a safe "Premium" design: White card, Light gray inputs. 
+		backgroundColor: '#fff',
+		color: '#111827'
+	};
+
+	// Improved Input Style
+	const modernInputStyle = {
+		width: '100%',
+		padding: '12px 16px',
+		borderRadius: '8px',
+		border: '1px solid #e5e7eb',
+		background: '#f9fafb',
+		fontSize: '15px',
+		color: '#111827',
+		outline: 'none',
+		boxSizing: 'border-box'
+	};
+
 	return (
-		<div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', maxWidth: 900, margin: '40px auto', background: '#fff', borderRadius: 16, overflow: 'hidden', boxShadow: '0 10px 24px rgba(0,0,0,0.08)' }}>
+		<div style={{
+			minHeight: '100vh',
+			display: 'flex',
+			alignItems: 'center',
+			justifyContent: 'center',
+			background: '#f3f4f6',
+			padding: '20px'
+		}}>
 			<div style={{
-				minHeight: 440,
-				padding: '48px 24px',
-				background: `linear-gradient(130deg, rgba(255,153,0,0.8) 0%, rgba(255,194,120,0.77) 100%), url('/assets/login-illustration.png')`,
-				backgroundSize: 'cover',
-				backgroundPosition: 'center',
-				color: '#fff',
-				display: 'flex',
-				flexDirection: 'column',
-				alignItems: 'center',
-				justifyContent: 'center',
-				textAlign: 'center',
+				width: '100%',
+				maxWidth: '420px',
+				background: '#ffffff',
+				borderRadius: '16px',
+				boxShadow: '0 10px 25px rgba(0,0,0,0.05)',
+				padding: '40px',
+				boxSizing: 'border-box'
 			}}>
-				<h2 style={{ margin: 0, marginBottom: 16, fontSize: 32, fontWeight: 700, lineHeight: 1.1, textShadow: '0 1px 8px rgba(0,0,0,0.11)' }}>Shop smarter with Mini Amazon.</h2>
-				<p style={{ marginTop: 0, marginBottom: 0, fontSize: 18, fontWeight: 400, textShadow: '0 1px 6px rgba(0,0,0,0.07)' }}>Discover great deals, fast checkout, and a seamless shopping experience.</p>
-			</div>
-			<div style={{ padding: 32 }}>
-				<img src="/assets/mylogo.png" alt="MiniAmazon" style={{ height: 70, width: 'auto', display: 'block', margin: '0 auto 24px auto' }} />
-				<p style={{ marginTop: 0, color: '#666', textAlign: 'center' }}>Please login to your account</p>
-				<form onSubmit={onSubmit} style={{ display: 'grid', gap: 15, marginTop: 12, justifyContent: 'center' }}>
-					<input value={email} onChange={e => setEmail(e.target.value)} placeholder="Email address" type="email" style={inputStyle} />
-					<div style={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
-						<input value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" type={showPassword ? 'text' : 'password'} style={inputStyle} />
-						<button type="button" tabIndex={-1} aria-label="Show password" onClick={() => setShowPassword(v => !v)} style={{ position: 'absolute', top: '50%', right: 14, transform: 'translateY(-50%)', background: 'none', border: 0, cursor: 'pointer', color: '#888', fontSize: 22, padding:0, lineHeight:1 }}>
+				{/* Logo */}
+				<div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
+					<img src="/assets/mylogo.png" alt="MiniAmazon" style={{ height: '60px', width: 'auto' }} />
+				</div>
+
+				<h2 style={{
+					textAlign: 'center',
+					fontSize: '24px',
+					fontWeight: '700',
+					color: '#1f2937',
+					marginBottom: '32px'
+				}}>
+					Sign In
+				</h2>
+
+				<form onSubmit={onSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+					<div>
+						<input
+							value={email}
+							onChange={e => setEmail(e.target.value)}
+							placeholder="Email address"
+							type="email"
+							style={modernInputStyle}
+							onFocus={(e) => e.target.style.borderColor = '#2563eb'}
+							onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+						/>
+					</div>
+
+					<div style={{ position: 'relative' }}>
+						<input
+							value={password}
+							onChange={e => setPassword(e.target.value)}
+							placeholder="Password"
+							type={showPassword ? 'text' : 'password'}
+							style={modernInputStyle}
+							onFocus={(e) => e.target.style.borderColor = '#2563eb'}
+							onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+						/>
+						<button
+							type="button"
+							onClick={() => setShowPassword(!showPassword)}
+							style={{
+								position: 'absolute',
+								right: '12px',
+								top: '50%',
+								transform: 'translateY(-50%)',
+								background: 'none',
+								border: 'none',
+								cursor: 'pointer',
+								fontSize: '18px',
+								color: '#6b7280'
+							}}
+						>
 							{showPassword ? '🙈' : '👁️'}
 						</button>
 					</div>
-					<label style={{ fontSize: 15, color: '#1a1a1a', marginBottom: -6, marginTop: 2, display: 'flex', alignItems: 'center', gap: 5, fontWeight: 500 }}>
-						<input type="checkbox" checked={remember} onChange={e => setRemember(e.target.checked)} style={{ accentColor: '#ff7a18' }} /> Remember me
-					</label>
-					{error && <div style={{ color: '#e11d48', fontSize: 14, textAlign: 'center' }}>{error}</div>}
-					<button type="submit" style={{ padding: '8px 20px', background: '#ff7a18', color: '#fff', border: 0, borderRadius: 8, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1, fontWeight: 600, fontSize: 14, margin: '0 auto', display: 'block', width: 'fit-content' }} disabled={loading}>
-						{loading ? 'Logging in...' : 'Login'}
-					</button>
-					<div style={{marginTop:36, textAlign:'center'}}>
-						<span style={{color:'#444', fontSize:15}}>Don't have an account?</span> <Link to="/signup" style={{color:'#ff7a18', fontWeight: 600, paddingLeft:4}}>Sign up</Link>
+
+					<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '14px' }}>
+						<label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', color: '#4b5563' }}>
+							<input
+								type="checkbox"
+								checked={remember}
+								onChange={e => setRemember(e.target.checked)}
+								style={{ accentColor: '#2563eb', width: '16px', height: '16px' }}
+							/>
+							Remember me
+						</label>
 					</div>
+
+					{error && (
+						<div style={{
+							background: '#fee2e2',
+							color: '#ef4444',
+							padding: '12px',
+							borderRadius: '8px',
+							fontSize: '14px',
+							textAlign: 'center'
+						}}>
+							{error}
+						</div>
+					)}
+
+					<button
+						type="submit"
+						disabled={loading}
+						style={{
+							width: '100%',
+							padding: '14px',
+							background: '#ff9100', // Used the requested orange accent
+							color: 'white',
+							border: 'none',
+							borderRadius: '8px',
+							fontSize: '16px',
+							fontWeight: '600',
+							cursor: loading ? 'not-allowed' : 'pointer',
+							opacity: loading ? 0.7 : 1,
+							boxShadow: '0 4px 6px rgba(255, 145, 0, 0.2)',
+							transition: 'transform 0.1s'
+						}}
+					>
+						{loading ? 'Signing in...' : 'Sign In'}
+					</button>
 				</form>
+
+				<div style={{ textAlign: 'center', marginTop: '24px', fontSize: '14px', color: '#6b7280' }}>
+					Don't have an account?{' '}
+					<Link to="/signup" style={{ color: '#ff9100', fontWeight: '600', textDecoration: 'none' }}>
+						Sign up
+					</Link>
+				</div>
 			</div>
 		</div>
-	)
+	);
 }
-
-

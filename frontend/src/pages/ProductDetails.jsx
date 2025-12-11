@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
+import { useWishlist } from '../contexts/WishlistContext';
 
 const formatINR = (value) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(value);
 const formatDisplayINR = (price) => formatINR(price);
@@ -74,6 +75,7 @@ export default function ProductDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();
+  const { isInWishlist, toggleWishlist } = useWishlist();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -119,18 +121,18 @@ export default function ProductDetails() {
   }
 
   const originalName = product.name || '';
-  const slug = originalName.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+  const slug = originalName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
   const baseNames = [slug];
   const lowerSpaces = originalName.toLowerCase();
-  baseNames.push(lowerSpaces.replace(/\s+/g,'-'));
-  baseNames.push(lowerSpaces.replace(/\s+/g,'_'));
+  baseNames.push(lowerSpaces.replace(/\s+/g, '-'));
+  baseNames.push(lowerSpaces.replace(/\s+/g, '_'));
   baseNames.push(lowerSpaces);
   baseNames.push(originalName);
   const encodedOriginal = encodeURIComponent(originalName);
-  const exts = ['webp','jpg','jpeg','png'];
+  const exts = ['webp', 'jpg', 'jpeg', 'png'];
   const candidates = [];
-  baseNames.forEach(b=> exts.forEach(ext=> candidates.push(`/products/${b}.${ext}`)));
-  exts.forEach(ext=> candidates.push(`/products/${encodedOriginal}.${ext}`));
+  baseNames.forEach(b => exts.forEach(ext => candidates.push(`/products/${b}.${ext}`)));
+  exts.forEach(ext => candidates.push(`/products/${encodedOriginal}.${ext}`));
   if (product.imageUrl) candidates.unshift(product.imageUrl);
 
   const handleAddToCart = () => {
@@ -140,7 +142,7 @@ export default function ProductDetails() {
 
   const handleBuyNow = () => {
     addToCart(product);
-    navigate('/cart');
+    navigate('/buy-now');
   };
 
   return (
@@ -244,6 +246,37 @@ export default function ProductDetails() {
                 }}
               >
                 Buy Now
+              </button>
+              <button
+                onClick={() => toggleWishlist(product)}
+                style={{
+                  width: 52,
+                  height: 48, // Match height roughly with other buttons (padding + font size)
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: '#fff',
+                  border: '1px solid #e0e0e0',
+                  borderRadius: 8,
+                  cursor: 'pointer',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'scale(1.05)';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+                  e.currentTarget.style.borderColor = '#d0d0d0';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'scale(1)';
+                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.05)';
+                  e.currentTarget.style.borderColor = '#e0e0e0';
+                }}
+                aria-label={isInWishlist(product.id) ? "Remove from wishlist" : "Add to wishlist"}
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill={isInWishlist(product.id) ? "#ff4d4f" : "none"} stroke={isInWishlist(product.id) ? "#ff4d4f" : "#666"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
               </button>
             </div>
           </div>
