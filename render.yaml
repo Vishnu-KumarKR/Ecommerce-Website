@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: miniamazon-api
+    runtime: node
+    region: singapore
+    plan: free
+    rootDirectory: backend
+    buildCommand: npm install
+    startCommand: node src/server.js
+    envVars:
+      - key: PORT
+        value: 10000
+    autoDeploy: true
