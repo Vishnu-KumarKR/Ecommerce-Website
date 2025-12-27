@@ -78,7 +78,8 @@ export default function Checkout() {
       }
     } catch (err) {
       console.error('Failed to place order:', err);
-      setError('Failed to place order. Please try again.');
+      const msg = err.response?.data?.message || err.message || 'Failed to place order. Please try again.';
+      setError(msg);
       setIsPlacingOrder(false);
     }
   };
