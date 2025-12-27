@@ -38,8 +38,20 @@ apiClient.interceptors.response.use(
 			message: error.message,
 			status: error.response?.status,
 			url: error.config?.url,
-			fullURL: error.config?.baseURL + error.config?.url
 		})
+
+		// Auto-logout on 401 (Unauthorized)
+		if (error.response?.status === 401) {
+			console.warn('⚠️ Token expired or invalid. Logging out...')
+			localStorage.removeItem('mini_amazon_token')
+			localStorage.removeItem('mini_amazon_user')
+			window.dispatchEvent(new Event('auth-change'))
+			// Optional: Redirect to login if not already there
+			if (window.location.pathname !== '/login') {
+				// window.location.href = '/login' // Let React handle it via state change usually, but force if needed
+			}
+		}
+
 		return Promise.reject(error)
 	}
 )
